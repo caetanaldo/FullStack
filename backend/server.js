@@ -6,6 +6,8 @@ import authRoutes from "./src/routes/authRoutes.js";
 import studentRoutes from "./src/routes/studentRoutes.js";
 import classRoutes from "./src/routes/classRoutes.js";
 import enrollmentRoutes from "./src/routes/enrollmentRoutes.js";
+import gradeRoutes from "./src/routes/gradeRoutes.js";
+
 
 
 const app = express();
@@ -19,6 +21,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/students", studentRoutes);
 app.use("/classes", classRoutes);
+app.use("/grades", gradeRoutes);
 
 app.listen(PORT, async () => {
   await connect();
