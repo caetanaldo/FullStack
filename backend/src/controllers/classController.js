@@ -21,7 +21,7 @@ const classController = {
   async getProfessores(req, res) {
     try {
       const professores = await Professor.findAll({
-        attributes: ["id", "user_id"],
+        attributes: [["id", "professor_id"], "user_id"],
         include: {
           model: User,
           as: "user",
