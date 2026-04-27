@@ -20,9 +20,13 @@ const classController = {
 
   async getProfessores(req, res) {
     try {
-      const professores = await User.findAll({
-        where: { role: "professor" },
-        attributes: ["id", "name", "email"],
+      const professores = await Professor.findAll({
+        attributes: ["id", "user_id"],
+        include: {
+          model: User,
+          as: "user",
+          attributes: ["name", "email"],
+        },
       });
       return res.status(200).json(professores);
     } catch (error) {
