@@ -52,8 +52,16 @@ const gradeController = {
         return res.status(400).json({ message: "Nota deve ser entre 0 e 10" });
       }
 
-      const grade = await Grade.create({ student_id, class_id, value });
-      return res.status(201).json({ message: "Nota lançada com sucesso", grade });
+      await Grade.create({ student_id, class_id, value });
+
+      return res.status(201).json({
+        message: "Nota lançada com sucesso",
+        nota: {
+          aluno: student.name,
+          turma: turma.name,
+          valor: value,
+        },
+      });
     } catch (error) {
       return res.status(500).json({ message: "Erro ao lançar nota", error });
     }
