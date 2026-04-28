@@ -7,11 +7,19 @@ const gradeController = {
     try {
       const grades = await Grade.findAll({
         include: [
-          { model: Student, attributes: ["id", "name", "email"] },
-          { model: Class, attributes: ["id", "name"] },
+          { model: Student, attributes: ["name"] },
+          { model: Class, attributes: ["name"] },
         ],
       });
-      return res.status(200).json(grades);
+
+      const resultado = grades.map((grade) => ({
+        id: grade.id,
+        aluno: grade.student.name,
+        turma: grade.class.name,
+        nota: grade.value,
+      }));
+
+      return res.status(200).json(resultado);
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar notas", error });
     }
@@ -21,14 +29,21 @@ const gradeController = {
     try {
       const grade = await Grade.findByPk(req.params.id, {
         include: [
-          { model: Student, attributes: ["id", "name", "email"] },
-          { model: Class, attributes: ["id", "name"] },
+          { model: Student, attributes: ["name"] },
+          { model: Class, attributes: ["name"] },
         ],
       });
+
       if (!grade) {
         return res.status(404).json({ message: "Nota não encontrada" });
       }
-      return res.status(200).json(grade);
+
+      return res.status(200).json({
+        id: grade.id,
+        aluno: grade.student.name,
+        turma: grade.class.name,
+        nota: grade.value,
+      });
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar nota", error });
     }
