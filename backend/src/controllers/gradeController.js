@@ -90,13 +90,28 @@ const gradeController = {
         return res.status(400).json({ message: "Nota deve ser entre 0 e 10" });
       }
 
-      const grade = await Grade.findByPk(req.params.id);
+      const grade = await Grade.findByPk(req.params.id, {
+        include: [
+          { model: Student, attributes: ["name"] },
+          { model: Class, attributes: ["name"] },
+        ],
+      });
+
       if (!grade) {
         return res.status(404).json({ message: "Nota não encontrada" });
       }
 
       await grade.update({ value });
-      return res.status(200).json({ message: "Nota atualizada com sucesso", grade });
+
+      return res.status(200).json({
+        message: "Nota atualizada com sucesso",
+        nota: {
+          id: grade.id,
+          aluno: grade.student.name,
+          turma: grade.class.name,
+          nota: value,
+        },
+      });
     } catch (error) {
       return res.status(500).json({ message: "Erro ao atualizar nota", error });
     }
