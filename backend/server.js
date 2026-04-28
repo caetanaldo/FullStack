@@ -7,6 +7,8 @@ import studentRoutes from "./src/routes/studentRoutes.js";
 import classRoutes from "./src/routes/classRoutes.js";
 import enrollmentRoutes from "./src/routes/enrollmentRoutes.js";
 import gradeRoutes from "./src/routes/gradeRoutes.js";
+import { seedAdmin } from "./src/database/seed.js";
+
 
 
 
@@ -25,6 +27,7 @@ app.use("/enrollments", enrollmentRoutes);
 
 app.listen(PORT, async () => {
   await connect();
+  await seedAdmin();
   console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
 });
 
