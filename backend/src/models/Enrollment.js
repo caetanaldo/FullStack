@@ -22,7 +22,12 @@ const Enrollment = sequelize.define("enrollments", {
   },
 });
 
-Student.belongsToMany(Class, { through: Enrollment, foreignKey: "student_id" });
-Class.belongsToMany(Student, { through: Enrollment, foreignKey: "class_id" });
+Enrollment.belongsTo(Student, { foreignKey: "student_id" });
+Enrollment.belongsTo(Class, { foreignKey: "class_id" });
+Student.hasMany(Enrollment, { foreignKey: "student_id", as: "matriculas" });
+Class.hasMany(Enrollment, { foreignKey: "class_id", as: "matriculas" });
+
+Student.belongsToMany(Class, { through: Enrollment, foreignKey: "student_id", as: "turmas" });
+Class.belongsToMany(Student, { through: Enrollment, foreignKey: "class_id", as: "alunos" });
 
 export default Enrollment;

@@ -3,21 +3,31 @@ import User from "../models/User.js";
 import Professor from "../models/Professor.js";
 
 const classController = {
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
-      const classes = await Class.findAll({
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const offset = (page - 1) * limit;
+
+      const { count, rows } = await Class.findAndCountAll({
+        limit,
+        offset,
         include: {
           model: User,
           as: "professor",
           attributes: ["id", "name", "email"],
         },
       });
-      return res.status(200).json(classes);
-    } catch (error) {
-      return res.status(500).json({ message: "Erro ao buscar turmas", error });
-    }
-    next(error);
 
+      return res.status(200).json({
+        total: count,
+        pagina: page,
+        totalPaginas: Math.ceil(count / limit),
+        turmas: rows,
+      });
+    } catch (error) {
+      next(error);
+    }
   },
 
   async getProfessores(req, res) {
