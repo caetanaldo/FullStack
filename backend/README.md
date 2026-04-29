@@ -171,6 +171,6 @@ Authorization: Bearer seutokenaqui
 | Nome | Função |
 |------|--------|
 | Erick | Backend |
-| Gustavo | Frontend |
+| Gustavo | Backend |
 | Ana | Frontend |
 | Gabriel | Frontend |
