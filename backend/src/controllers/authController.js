@@ -26,7 +26,7 @@ const loginSchema = z.object({
 });
 
 const authController = {
-  async register(req, res) {
+  async register(req, res, next) {
     try {
       const dados = registerSchema.parse(req.body);
 
@@ -49,13 +49,13 @@ const authController = {
       return res.status(201).json({ message: "Usuário criado com sucesso", user });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: error.issues[0].message });
+        return res.status(400).json({ message: error.errors[0].message });
       }
-      return res.status(500).json({ message: "Erro ao criar usuário", error });
+      next(error);
     }
   },
 
-  async login(req, res) {
+  async login(req, res, next) {
     try {
       const dados = loginSchema.parse(req.body);
 
@@ -78,9 +78,9 @@ const authController = {
       return res.status(200).json({ message: "Login realizado com sucesso", token });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: error.issues[0].message });
+        return res.status(400).json({ message: error.errors[0].message });
       }
-      return res.status(500).json({ message: "Erro ao fazer login", error });
+      next(error);
     }
   },
 };

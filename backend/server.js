@@ -8,6 +8,7 @@ import classRoutes from "./src/routes/classRoutes.js";
 import enrollmentRoutes from "./src/routes/enrollmentRoutes.js";
 import gradeRoutes from "./src/routes/gradeRoutes.js";
 import { seedAdmin } from "./src/database/seed.js";
+import { errorMiddleware } from "./src/middlewares/errorMiddleware.js";
 
 
 
@@ -24,6 +25,8 @@ app.use("/students", studentRoutes);
 app.use("/classes", classRoutes);
 app.use("/grades", gradeRoutes);
 app.use("/enrollments", enrollmentRoutes);
+
+app.use(errorMiddleware)
 
 app.listen(PORT, async () => {
   await connect();

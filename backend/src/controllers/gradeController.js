@@ -23,6 +23,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar notas", error });
     }
+    next(error);
+
   },
 
   async getById(req, res) {
@@ -47,6 +49,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar nota", error });
     }
+    next(error);
+
   },
 
   async create(req, res) {
@@ -80,6 +84,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao lançar nota", error });
     }
+    next(error);
+
   },
 
   async update(req, res) {
@@ -115,6 +121,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao atualizar nota", error });
     }
+    next(error);
+
   },
 
   async delete(req, res) {
@@ -129,6 +137,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao deletar nota", error });
     }
+    next(error);
+
   },
 
   async getByStudent(req, res) {
@@ -141,6 +151,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar notas do aluno", error });
     }
+    next(error);
+
   },
 };
 

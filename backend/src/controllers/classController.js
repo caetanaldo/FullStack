@@ -16,6 +16,8 @@ const classController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar turmas", error });
     }
+    next(error);
+
   },
 
   async getProfessores(req, res) {
@@ -34,6 +36,8 @@ const classController = {
         .status(500)
         .json({ message: "Erro ao buscar professores", error });
     }
+    next(error);
+
   },
 
   async getById(req, res) {
@@ -54,6 +58,8 @@ const classController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar turma", error });
     }
+    next(error);
+
   },
 
   async create(req, res) {
@@ -76,6 +82,8 @@ const classController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao criar turma", error });
     }
+    next(error);
+
   },
 
   async update(req, res) {
@@ -96,6 +104,8 @@ const classController = {
         .status(500)
         .json({ message: "Erro ao atualizar turma", error });
     }
+    next(error);
+
   },
 
   async delete(req, res) {
@@ -110,6 +120,8 @@ const classController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao deletar turma", error });
     }
+    next(error);
+
   },
 };
 

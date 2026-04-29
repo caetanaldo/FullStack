@@ -8,6 +8,8 @@ const studentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar alunos", error });
     }
+    next(error);
+
   },
 
   async getById(req, res) {
@@ -20,6 +22,8 @@ const studentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar aluno", error });
     }
+    next(error);
+
   },
 
   async update(req, res) {
@@ -34,6 +38,8 @@ const studentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao atualizar aluno", error });
     }
+    next(error);
+
   },
 
   async delete(req, res) {
@@ -47,6 +53,8 @@ const studentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao deletar aluno", error });
     }
+    next(error);
+
   },
 };
 

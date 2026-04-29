@@ -15,6 +15,8 @@ const enrollmentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar matrículas", error });
     }
+    next(error);
+
   },
 
   async getById(req, res) {
@@ -32,6 +34,8 @@ const enrollmentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar matrícula", error });
     }
+    next(error);
+
   },
 
   async create(req, res) {
@@ -58,6 +62,8 @@ const enrollmentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao realizar matrícula", error });
     }
+    next(error);
+
   },
 
   async delete(req, res) {
@@ -72,6 +78,8 @@ const enrollmentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao remover matrícula", error });
     }
+    next(error);
+
   },
 };
 
