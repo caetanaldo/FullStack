@@ -1,12 +1,25 @@
 import Student from "../models/Student.js";
 
 const studentController = {
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
-      const students = await Student.findAll();
-      return res.status(200).json(students);
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const offset = (page - 1) * limit;
+
+      const { count, rows } = await Student.findAndCountAll({
+        limit,
+        offset,
+      });
+
+      return res.status(200).json({
+        total: count,
+        pagina: page,
+        totalPaginas: Math.ceil(count / limit),
+        alunos: rows,
+      });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao buscar alunos", error });
+      next(error);
     }
   },
 
@@ -20,6 +33,8 @@ const studentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar aluno", error });
     }
+    next(error);
+
   },
 
   async update(req, res) {
@@ -34,6 +49,8 @@ const studentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao atualizar aluno", error });
     }
+    next(error);
+
   },
 
   async delete(req, res) {
@@ -47,6 +64,8 @@ const studentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao deletar aluno", error });
     }
+    next(error);
+
   },
 };
 

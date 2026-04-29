@@ -3,25 +3,36 @@ import Student from "../models/Student.js";
 import Class from "../models/Class.js";
 
 const gradeController = {
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
-      const grades = await Grade.findAll({
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const offset = (page - 1) * limit;
+
+      const { count, rows } = await Grade.findAndCountAll({
+        limit,
+        offset,
         include: [
           { model: Student, attributes: ["name"] },
           { model: Class, attributes: ["name"] },
         ],
       });
 
-      const resultado = grades.map((grade) => ({
+      const resultado = rows.map((grade) => ({
         id: grade.id,
         aluno: grade.student.name,
         turma: grade.class.name,
         nota: grade.value,
       }));
 
-      return res.status(200).json(resultado);
+      return res.status(200).json({
+        total: count,
+        pagina: page,
+        totalPaginas: Math.ceil(count / limit),
+        notas: resultado,
+      });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao buscar notas", error });
+      next(error);
     }
   },
 
@@ -47,6 +58,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar nota", error });
     }
+    next(error);
+
   },
 
   async create(req, res) {
@@ -80,6 +93,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao lançar nota", error });
     }
+    next(error);
+
   },
 
   async update(req, res) {
@@ -115,6 +130,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao atualizar nota", error });
     }
+    next(error);
+
   },
 
   async delete(req, res) {
@@ -129,6 +146,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao deletar nota", error });
     }
+    next(error);
+
   },
 
   async getByStudent(req, res) {
@@ -141,6 +160,8 @@ const gradeController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar notas do aluno", error });
     }
+    next(error);
+
   },
 };
 

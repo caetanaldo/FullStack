@@ -3,17 +3,29 @@ import Student from "../models/Student.js";
 import Class from "../models/Class.js";
 
 const enrollmentController = {
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
-      const enrollments = await Enrollment.findAll({
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const offset = (page - 1) * limit;
+
+      const { count, rows } = await Enrollment.findAndCountAll({
+        limit,
+        offset,
         include: [
           { model: Student, attributes: ["id", "name", "email"] },
           { model: Class, attributes: ["id", "name", "description"] },
         ],
       });
-      return res.status(200).json(enrollments);
+
+      return res.status(200).json({
+        total: count,
+        pagina: page,
+        totalPaginas: Math.ceil(count / limit),
+        matriculas: rows,
+      });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao buscar matrículas", error });
+      next(error);
     }
   },
 
@@ -32,6 +44,8 @@ const enrollmentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar matrícula", error });
     }
+    next(error);
+
   },
 
   async create(req, res) {
@@ -58,6 +72,8 @@ const enrollmentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao realizar matrícula", error });
     }
+    next(error);
+
   },
 
   async delete(req, res) {
@@ -72,6 +88,8 @@ const enrollmentController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao remover matrícula", error });
     }
+    next(error);
+
   },
 };
 

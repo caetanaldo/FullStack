@@ -3,18 +3,30 @@ import User from "../models/User.js";
 import Professor from "../models/Professor.js";
 
 const classController = {
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
-      const classes = await Class.findAll({
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const offset = (page - 1) * limit;
+
+      const { count, rows } = await Class.findAndCountAll({
+        limit,
+        offset,
         include: {
           model: User,
           as: "professor",
           attributes: ["id", "name", "email"],
         },
       });
-      return res.status(200).json(classes);
+
+      return res.status(200).json({
+        total: count,
+        pagina: page,
+        totalPaginas: Math.ceil(count / limit),
+        turmas: rows,
+      });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao buscar turmas", error });
+      next(error);
     }
   },
 
@@ -34,6 +46,8 @@ const classController = {
         .status(500)
         .json({ message: "Erro ao buscar professores", error });
     }
+    next(error);
+
   },
 
   async getById(req, res) {
@@ -54,6 +68,8 @@ const classController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao buscar turma", error });
     }
+    next(error);
+
   },
 
   async create(req, res) {
@@ -76,6 +92,8 @@ const classController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao criar turma", error });
     }
+    next(error);
+
   },
 
   async update(req, res) {
@@ -96,6 +114,8 @@ const classController = {
         .status(500)
         .json({ message: "Erro ao atualizar turma", error });
     }
+    next(error);
+
   },
 
   async delete(req, res) {
@@ -110,6 +130,8 @@ const classController = {
     } catch (error) {
       return res.status(500).json({ message: "Erro ao deletar turma", error });
     }
+    next(error);
+
   },
 };
 
