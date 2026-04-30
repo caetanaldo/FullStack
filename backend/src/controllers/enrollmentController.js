@@ -29,7 +29,7 @@ const enrollmentController = {
     }
   },
 
-  async getById(req, res) {
+  async getById(req, res, next) {
     try {
       const enrollment = await Enrollment.findByPk(req.params.id, {
         include: [
@@ -42,13 +42,11 @@ const enrollmentController = {
       }
       return res.status(200).json(enrollment);
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao buscar matrícula", error });
+      next(error);
     }
-    next(error);
-
   },
 
-  async create(req, res) {
+  async create(req, res, next) {
     try {
       const { student_id, class_id } = req.body;
 
@@ -70,13 +68,11 @@ const enrollmentController = {
       const enrollment = await Enrollment.create({ student_id, class_id });
       return res.status(201).json({ message: "Matrícula realizada com sucesso", enrollment });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao realizar matrícula", error });
+      next(error);
     }
-    next(error);
-
   },
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       const enrollment = await Enrollment.findByPk(req.params.id);
       if (!enrollment) {
@@ -86,10 +82,8 @@ const enrollmentController = {
       await enrollment.destroy();
       return res.status(200).json({ message: "Matrícula removida com sucesso" });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao remover matrícula", error });
+      next(error);
     }
-    next(error);
-
   },
 };
 

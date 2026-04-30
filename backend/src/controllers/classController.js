@@ -30,7 +30,7 @@ const classController = {
     }
   },
 
-  async getProfessores(req, res) {
+  async getProfessores(req, res, next) {
     try {
       const professores = await Professor.findAll({
         attributes: [["id", "professor_id"], "user_id"],
@@ -42,15 +42,11 @@ const classController = {
       });
       return res.status(200).json(professores);
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Erro ao buscar professores", error });
+      next(error);
     }
-    next(error);
-
   },
 
-  async getById(req, res) {
+  async getById(req, res, next) {
     try {
       const turma = await Class.findByPk(req.params.id, {
         include: {
@@ -66,13 +62,11 @@ const classController = {
 
       return res.status(200).json(turma);
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao buscar turma", error });
+      next(error);
     }
-    next(error);
-
   },
 
-  async create(req, res) {
+  async create(req, res, next) {
     try {
       const { name, description, professor_id } = req.body;
 
@@ -86,17 +80,13 @@ const classController = {
         description,
         professor_id: professor.user_id,
       });
-      return res
-        .status(201)
-        .json({ message: "Turma criada com sucesso", turma });
+      return res.status(201).json({ message: "Turma criada com sucesso", turma });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao criar turma", error });
+      next(error);
     }
-    next(error);
-
   },
 
-  async update(req, res) {
+  async update(req, res, next) {
     try {
       const { name, description } = req.body;
 
@@ -106,19 +96,13 @@ const classController = {
       }
 
       await turma.update({ name, description });
-      return res
-        .status(200)
-        .json({ message: "Turma atualizada com sucesso", turma });
+      return res.status(200).json({ message: "Turma atualizada com sucesso", turma });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Erro ao atualizar turma", error });
+      next(error);
     }
-    next(error);
-
   },
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       const turma = await Class.findByPk(req.params.id);
       if (!turma) {
@@ -128,10 +112,8 @@ const classController = {
       await turma.destroy();
       return res.status(200).json({ message: "Turma deletada com sucesso" });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao deletar turma", error });
+      next(error);
     }
-    next(error);
-
   },
 };
 

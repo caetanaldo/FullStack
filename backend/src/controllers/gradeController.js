@@ -32,11 +32,11 @@ const gradeController = {
         notas: resultado,
       });
     } catch (error) {
-      next(error);
+      next(error); // ✅ correto: dentro do catch, sem return antes
     }
   },
 
-  async getById(req, res) {
+  async getById(req, res, next) {
     try {
       const grade = await Grade.findByPk(req.params.id, {
         include: [
@@ -56,15 +56,14 @@ const gradeController = {
         nota: grade.value,
       });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao buscar nota", error });
+      next(error);
     }
-    next(error);
-
   },
 
-  async create(req, res) {
+  async create(req, res, next) {
     try {
       const { student_id, class_id, value } = req.body;
+      // ✅ validação de range removida daqui — já feita pelo gradeValidator
 
       const student = await Student.findByPk(student_id);
       if (!student) {
@@ -75,7 +74,6 @@ const gradeController = {
       if (!turma) {
         return res.status(404).json({ message: "Turma não encontrada" });
       }
-
 
       await Grade.create({ student_id, class_id, value });
 
@@ -88,19 +86,14 @@ const gradeController = {
         },
       });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao lançar nota", error });
+      next(error);
     }
-    next(error);
-
   },
 
-  async update(req, res) {
+  async update(req, res, next) {
     try {
       const { value } = req.body;
-
-      if (value < 0 || value > 10) {
-        return res.status(400).json({ message: "Nota deve ser entre 0 e 10" });
-      }
+      // ✅ validação de range removida daqui — já feita pelo gradeValidator
 
       const grade = await Grade.findByPk(req.params.id, {
         include: [
@@ -125,13 +118,11 @@ const gradeController = {
         },
       });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao atualizar nota", error });
+      next(error);
     }
-    next(error);
-
   },
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       const grade = await Grade.findByPk(req.params.id);
       if (!grade) {
@@ -141,13 +132,11 @@ const gradeController = {
       await grade.destroy();
       return res.status(200).json({ message: "Nota deletada com sucesso" });
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao deletar nota", error });
+      next(error);
     }
-    next(error);
-
   },
 
-  async getByStudent(req, res) {
+  async getByStudent(req, res, next) {
     try {
       const grades = await Grade.findAll({
         where: { student_id: req.params.student_id },
@@ -155,10 +144,8 @@ const gradeController = {
       });
       return res.status(200).json(grades);
     } catch (error) {
-      return res.status(500).json({ message: "Erro ao buscar notas do aluno", error });
+      next(error);
     }
-    next(error);
-
   },
 };
 
