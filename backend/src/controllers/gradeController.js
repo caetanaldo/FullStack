@@ -76,9 +76,6 @@ const gradeController = {
         return res.status(404).json({ message: "Turma não encontrada" });
       }
 
-      if (value < 0 || value > 10) {
-        return res.status(400).json({ message: "Nota deve ser entre 0 e 10" });
-      }
 
       await Grade.create({ student_id, class_id, value });
 
