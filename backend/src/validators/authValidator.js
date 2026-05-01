@@ -12,7 +12,7 @@ export const registerSchema = z.object({
   password: passwordSchema,
   role: z.enum(["admin", "professor", "aluno"], {
     errorMap: () => ({ message: "Role inválido. Use: admin, professor ou aluno." }),
-  }),
+  }).optional().default("aluno"),
 });
 
 export const loginSchema = z.object({

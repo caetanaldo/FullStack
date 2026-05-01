@@ -1,6 +1,7 @@
 import Class from "../models/Class.js";
 import User from "../models/User.js";
 import Professor from "../models/Professor.js";
+import Enrollment from "../models/Enrollment.js";
 
 const classController = {
   async getAll(req, res, next) {
@@ -109,7 +110,9 @@ const classController = {
         return res.status(404).json({ message: "Turma não encontrada" });
       }
 
+      await Enrollment.destroy({where: {class_id: req.params.id}})
       await turma.destroy();
+
       return res.status(200).json({ message: "Turma deletada com sucesso" });
     } catch (error) {
       next(error);

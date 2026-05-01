@@ -60,13 +60,24 @@ const enrollmentController = {
         return res.status(404).json({ message: "Turma não encontrada" });
       }
 
-      const alreadyEnrolled = await Enrollment.findOne({ where: { student_id, class_id } });
+      const alreadyEnrolled = await Enrollment.findOne({
+        where: { student_id, class_id },
+      });
       if (alreadyEnrolled) {
-        return res.status(400).json({ message: "Aluno já matriculado nessa turma" });
+        return res
+          .status(400)
+          .json({ message: "Aluno já matriculado nessa turma" });
       }
 
-      const enrollment = await Enrollment.create({ student_id, class_id });
-      return res.status(201).json({ message: "Matrícula realizada com sucesso", enrollment });
+      await Enrollment.create({ student_id, class_id });
+
+      return res.status(201).json({
+        message: "Matrícula realizada com sucesso",
+        matricula: {
+          aluno: student.name,
+          turma: turma.name,
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -80,7 +91,9 @@ const enrollmentController = {
       }
 
       await enrollment.destroy();
-      return res.status(200).json({ message: "Matrícula removida com sucesso" });
+      return res
+        .status(200)
+        .json({ message: "Matrícula removida com sucesso" });
     } catch (error) {
       next(error);
     }
