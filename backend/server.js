@@ -10,6 +10,7 @@ import gradeRoutes from "./src/routes/gradeRoutes.js";
 import professorRoutes from "./src/routes/professorRoutes.js";
 import { seedAdmin } from "./src/database/Seed.js";
 import { errorMiddleware } from "./src/middlewares/errorMiddleware.js";
+import userRoutes from "./src/routes/userRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +24,7 @@ app.use("/classes", classRoutes);
 app.use("/grades", gradeRoutes);
 app.use("/enrollments", enrollmentRoutes);
 app.use("/professors", professorRoutes);
+app.use("/users", userRoutes);
 app.use(errorMiddleware);
 
 app.listen(PORT, async () => {
