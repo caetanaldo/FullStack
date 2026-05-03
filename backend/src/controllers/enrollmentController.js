@@ -3,6 +3,7 @@ import Student from "../models/Student.js";
 import Class from "../models/Class.js";
 import Professor from "../models/Professor.js";
 import Grade from "../models/Grade.js";
+import User from "../models/User.js";
 
 const enrollmentController = {
   async getAll(req, res, next) {
@@ -68,7 +69,19 @@ const enrollmentController = {
 
       const enrollments = await Enrollment.findAll({
         where: { student_id: student.id },
-        include: [{ model: Class, attributes: ["id", "name", "description"] }],
+        include: [
+          {
+            model: Class,
+            attributes: ["id", "name", "description"],
+            include: [
+              {
+                model: User,
+                as: "professor",
+                attributes: ["name"],
+              },
+            ],
+          },
+        ],
       });
 
       return res.status(200).json(enrollments);
