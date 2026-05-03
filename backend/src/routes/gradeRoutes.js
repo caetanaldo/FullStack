@@ -12,6 +12,6 @@ router.get("/student/:student_id", authMiddleware, roleMiddleware("admin", "prof
 router.get("/:id", authMiddleware, roleMiddleware("admin", "professor"), gradeController.getById);
 router.post("/", authMiddleware, roleMiddleware("admin", "professor"), validate(createGradeSchema), gradeController.create);
 router.put("/:id", authMiddleware, roleMiddleware("admin", "professor"), validate(updateGradeSchema), gradeController.update);
-router.delete("/:id", authMiddleware, roleMiddleware("admin"), gradeController.delete);
+router.delete("/:id", authMiddleware, roleMiddleware("admin", "professor"), gradeController.delete);
 
 export default router;

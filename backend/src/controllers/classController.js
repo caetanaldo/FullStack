@@ -35,11 +35,18 @@ const classController = {
     try {
       const professores = await Professor.findAll({
         attributes: [["id", "professor_id"], "user_id"],
-        include: {
-          model: User,
-          as: "user",
-          attributes: ["name", "email"],
-        },
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["name", "email"],
+          },
+          {
+            model: Class,
+            as: "classes",
+            attributes: ["id", "name"],
+          },
+        ],
       });
       return res.status(200).json(professores);
     } catch (error) {
