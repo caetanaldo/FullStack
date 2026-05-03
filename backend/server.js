@@ -12,6 +12,10 @@ import { seedAdmin } from "./src/database/Seed.js";
 import { errorMiddleware } from "./src/middlewares/errorMiddleware.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import "./src/models/GradeHistory.js";
+import "./src/models/Attendance.js";
+import attedanceRoutes from "./src/routes/attendanceRoutes.js";
+import "./src/models/Notification.js";
+import notificationRoutes from "./src/routes/notificationRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +30,8 @@ app.use("/grades", gradeRoutes);
 app.use("/enrollments", enrollmentRoutes);
 app.use("/professors", professorRoutes);
 app.use("/users", userRoutes);
+app.use("/attendances", attedanceRoutes);
+app.use("/notifications", notificationRoutes);
 app.use(errorMiddleware);
 
 app.listen(PORT, async () => {

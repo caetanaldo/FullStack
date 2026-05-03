@@ -2,6 +2,7 @@ import Grade from "../models/Grade.js";
 import Student from "../models/Student.js";
 import Class from "../models/Class.js";
 import GradeHistory from "../models/GradeHistory.js";
+import Notification from "../models/Notification.js";
 
 const gradeController = {
   async getAll(req, res, next) {
@@ -36,7 +37,7 @@ const gradeController = {
       next(error); // ✅ correto: dentro do catch, sem return antes
     }
   },
-  
+
   async getByStudent(req, res, next) {
     try {
       const student = await Student.findOne({
@@ -102,28 +103,34 @@ const gradeController = {
   async create(req, res, next) {
     try {
       const { student_id, class_id, value } = req.body;
-      // ✅ validação de range removida daqui — já feita pelo gradeValidator
 
       const student = await Student.findByPk(student_id);
-      if (!student) {
+      if (!student)
         return res.status(404).json({ message: "Aluno não encontrado" });
-      }
 
       const turma = await Class.findByPk(class_id);
-      if (!turma) {
+      if (!turma)
         return res.status(404).json({ message: "Turma não encontrada" });
+
+      if (value < 0 || value > 10) {
+        return res.status(400).json({ message: "Nota deve ser entre 0 e 10" });
       }
 
       await Grade.create({ student_id, class_id, value });
 
-      return res.status(201).json({
-        message: "Nota lançada com sucesso",
-        nota: {
-          aluno: student.name,
-          turma: turma.name,
-          valor: value,
-        },
+      // cria notificação pro aluno
+      await Notification.create({
+        user_id: student.user_id,
+        message: `Sua nota em ${turma.name} foi lançada: ${value}`,
+        type: "nota",
       });
+
+      return res
+        .status(201)
+        .json({
+          message: "Nota lançada com sucesso",
+          nota: { aluno: student.name, turma: turma.name, valor: value },
+        });
     } catch (error) {
       next(error);
     }
@@ -139,16 +146,14 @@ const gradeController = {
 
       const grade = await Grade.findByPk(req.params.id, {
         include: [
-          { model: Student, attributes: ["name"] },
+          { model: Student, attributes: ["id", "name", "user_id"] },
           { model: Class, attributes: ["name"] },
         ],
       });
 
-      if (!grade) {
+      if (!grade)
         return res.status(404).json({ message: "Nota não encontrada" });
-      }
 
-      // salva o histórico antes de atualizar
       await GradeHistory.create({
         grade_id: grade.id,
         old_value: grade.value,
@@ -157,6 +162,13 @@ const gradeController = {
       });
 
       await grade.update({ value });
+
+      // cria notificação pro aluno
+      await Notification.create({
+        user_id: grade.student.user_id,
+        message: `Sua nota em ${grade.class.name} foi atualizada para: ${value}`,
+        type: "nota",
+      });
 
       return res.status(200).json({
         message: "Nota atualizada com sucesso",
