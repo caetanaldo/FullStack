@@ -10,6 +10,7 @@ const router = Router();
 router.get("/", authMiddleware, roleMiddleware("admin", "professor"), gradeController.getAll);
 router.get("/student/:student_id", authMiddleware, roleMiddleware("admin", "professor", "aluno"), gradeController.getByStudent);
 router.get("/:id", authMiddleware, roleMiddleware("admin", "professor"), gradeController.getById);
+router.get("/:id/history", authMiddleware, roleMiddleware("admin", "professor"), gradeController.getHistory);
 router.post("/", authMiddleware, roleMiddleware("admin", "professor"), validate(createGradeSchema), gradeController.create);
 router.put("/:id", authMiddleware, roleMiddleware("admin", "professor"), validate(updateGradeSchema), gradeController.update);
 router.delete("/:id", authMiddleware, roleMiddleware("admin", "professor"), gradeController.delete);

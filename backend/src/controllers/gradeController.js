@@ -1,6 +1,7 @@
 import Grade from "../models/Grade.js";
 import Student from "../models/Student.js";
 import Class from "../models/Class.js";
+import GradeHistory from "../models/GradeHistory.js";
 
 const gradeController = {
   async getAll(req, res, next) {
@@ -35,6 +36,31 @@ const gradeController = {
       next(error); // ✅ correto: dentro do catch, sem return antes
     }
   },
+  
+  async getByStudent(req, res, next) {
+    try {
+      const student = await Student.findOne({
+        where: { user_id: req.params.student_id },
+      });
+      if (!student)
+        return res.status(404).json({ message: "Aluno não encontrado" });
+
+      const grades = await Grade.findAll({
+        where: { student_id: student.id },
+        include: [{ model: Class, attributes: ["id", "name"] }],
+      });
+
+      const resultado = grades.map((grade) => ({
+        id: grade.id,
+        turma: grade.class?.name,
+        value: grade.value,
+      }));
+
+      return res.status(200).json(resultado);
+    } catch (error) {
+      next(error);
+    }
+  },
 
   async getById(req, res, next) {
     try {
@@ -55,6 +81,19 @@ const gradeController = {
         turma: grade.class.name,
         nota: grade.value,
       });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getHistory(req, res, next) {
+    try {
+      const history = await GradeHistory.findAll({
+        where: { grade_id: req.params.id },
+        order: [["createdAt", "DESC"]],
+      });
+
+      return res.status(200).json(history);
     } catch (error) {
       next(error);
     }
@@ -93,7 +132,10 @@ const gradeController = {
   async update(req, res, next) {
     try {
       const { value } = req.body;
-      // ✅ validação de range removida daqui — já feita pelo gradeValidator
+
+      if (value < 0 || value > 10) {
+        return res.status(400).json({ message: "Nota deve ser entre 0 e 10" });
+      }
 
       const grade = await Grade.findByPk(req.params.id, {
         include: [
@@ -105,6 +147,14 @@ const gradeController = {
       if (!grade) {
         return res.status(404).json({ message: "Nota não encontrada" });
       }
+
+      // salva o histórico antes de atualizar
+      await GradeHistory.create({
+        grade_id: grade.id,
+        old_value: grade.value,
+        new_value: value,
+        changed_by: req.user.id,
+      });
 
       await grade.update({ value });
 
@@ -131,31 +181,6 @@ const gradeController = {
 
       await grade.destroy();
       return res.status(200).json({ message: "Nota deletada com sucesso" });
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  async getByStudent(req, res, next) {
-    try {
-      const student = await Student.findOne({
-        where: { user_id: req.params.student_id },
-      });
-      if (!student)
-        return res.status(404).json({ message: "Aluno não encontrado" });
-
-      const grades = await Grade.findAll({
-        where: { student_id: student.id },
-        include: [{ model: Class, attributes: ["id", "name"] }],
-      });
-
-      const resultado = grades.map((grade) => ({
-        id: grade.id,
-        turma: grade.class?.name,
-        value: grade.value,
-      }));
-
-      return res.status(200).json(resultado);
     } catch (error) {
       next(error);
     }

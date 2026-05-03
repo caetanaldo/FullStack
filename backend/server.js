@@ -11,6 +11,7 @@ import professorRoutes from "./src/routes/professorRoutes.js";
 import { seedAdmin } from "./src/database/Seed.js";
 import { errorMiddleware } from "./src/middlewares/errorMiddleware.js";
 import userRoutes from "./src/routes/userRoutes.js";
+import "./src/models/GradeHistory.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
