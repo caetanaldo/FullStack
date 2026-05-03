@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../database/SqlConnection.js";
 import Student from "./Student.js";
 import Class from "./Class.js";
+import Grade from "./Grade.js";
 
 const Enrollment = sequelize.define("enrollments", {
   student_id: {
@@ -24,6 +25,9 @@ const Enrollment = sequelize.define("enrollments", {
 
 Enrollment.belongsTo(Student, { foreignKey: "student_id" });
 Enrollment.belongsTo(Class, { foreignKey: "class_id" });
+Enrollment.hasMany(Grade, {
+  foreignKey: "student_id",
+});
 Student.hasMany(Enrollment, { foreignKey: "student_id", as: "matriculas" });
 Class.hasMany(Enrollment, { foreignKey: "class_id", as: "matriculas" });
 

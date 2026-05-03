@@ -138,11 +138,24 @@ const gradeController = {
 
   async getByStudent(req, res, next) {
     try {
+      const student = await Student.findOne({
+        where: { user_id: req.params.student_id },
+      });
+      if (!student)
+        return res.status(404).json({ message: "Aluno não encontrado" });
+
       const grades = await Grade.findAll({
-        where: { student_id: req.params.student_id },
+        where: { student_id: student.id },
         include: [{ model: Class, attributes: ["id", "name"] }],
       });
-      return res.status(200).json(grades);
+
+      const resultado = grades.map((grade) => ({
+        id: grade.id,
+        turma: grade.class?.name,
+        value: grade.value,
+      }));
+
+      return res.status(200).json(resultado);
     } catch (error) {
       next(error);
     }

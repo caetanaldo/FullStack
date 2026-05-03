@@ -67,6 +67,29 @@ const classController = {
     }
   },
 
+  async getMyClasses(req, res, next) {
+    try {
+      const professor = await Professor.findOne({
+        where: { user_id: req.user.id },
+      });
+      if (!professor)
+        return res.status(404).json({ message: "Professor não encontrado" });
+
+      const classes = await Class.findAll({
+        where: { professor_id: professor.user_id },
+        include: {
+          model: User,
+          as: "professor",
+          attributes: ["id", "name", "email"],
+        },
+      });
+
+      return res.status(200).json(classes);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async create(req, res, next) {
     try {
       const { name, description, professor_id } = req.body;
@@ -81,7 +104,9 @@ const classController = {
         description,
         professor_id: professor.user_id,
       });
-      return res.status(201).json({ message: "Turma criada com sucesso", turma });
+      return res
+        .status(201)
+        .json({ message: "Turma criada com sucesso", turma });
     } catch (error) {
       next(error);
     }
@@ -97,7 +122,9 @@ const classController = {
       }
 
       await turma.update({ name, description });
-      return res.status(200).json({ message: "Turma atualizada com sucesso", turma });
+      return res
+        .status(200)
+        .json({ message: "Turma atualizada com sucesso", turma });
     } catch (error) {
       next(error);
     }
@@ -110,7 +137,7 @@ const classController = {
         return res.status(404).json({ message: "Turma não encontrada" });
       }
 
-      await Enrollment.destroy({where: {class_id: req.params.id}})
+      await Enrollment.destroy({ where: { class_id: req.params.id } });
       await turma.destroy();
 
       return res.status(200).json({ message: "Turma deletada com sucesso" });
