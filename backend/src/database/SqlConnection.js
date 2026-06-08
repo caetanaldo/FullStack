@@ -9,7 +9,7 @@ const sequelize = new Sequelize(process.env.DB, process.env.DBUSER, process.env.
 async function connect() {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: false });
     console.log("✅ Conexão com SQL estabelecida");
   } catch (error) {
     console.error("Erro ao conectar no SQL:", error);
