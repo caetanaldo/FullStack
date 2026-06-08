@@ -137,3 +137,4 @@ dist
 
 node_modules/
 .env
+backend/src/database/schema.sql
